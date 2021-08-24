@@ -20,7 +20,12 @@
         margin: 0;
         padding: 0;
       }
-      h2,
+      h1 {
+        font-size:16.0pt;
+      }
+      h2 {
+        font-size:10.0pt;
+      }
       h3 {
         margin: 10px;
         font-size: 1.2em;
@@ -92,6 +97,36 @@
         margin-right: 2px;
         margin-left: 10px;
       }
+      /* The popup form - hidden by default */
+      .form-popup {
+        display: none;
+        position: fixed;
+        bottom: 0;
+        right: 15px;
+        border: 3px solid #f1f1f1;
+        z-index: 9;
+      }
+
+      /* Add styles to the form container */
+      .form-container {
+        max-width: 300px;
+        padding: 10px;
+        background-color: white;
+      }
+      #close {
+        float:right;
+        display:inline-block;
+        padding:2px 5px;
+        background:white;
+        border: none;
+      }
+      #close:hover {
+        float:right;
+        display:inline-block;
+        padding:2px 5px;
+        background:#ccc;
+        color:#fff;
+      }
       /* .accordion {
         box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
         top: 100%;
@@ -131,6 +166,24 @@
       } */
     </style>
   </head>
+  <script>
+    var forms = ['present_form', 'near_future_form', 'far_future_form'];
+
+    function openForm(idx) {
+      var lst = [0, 1, 2];
+      lst.splice(idx, 1);
+      document.getElementById(forms[lst[0]]).style.display = "none";
+      document.getElementById(forms[lst[1]]).style.display = "none";
+      document.getElementById(forms[idx]).style.display = "block";
+    }
+
+    function closeForm() {
+      for (i = 0; i < forms.length; i++)
+      {
+        document.getElementById(forms[i]).style.display = "none";
+      }
+    }
+  </script>
   <body>
     <div id="map"></div>
     <div class="map-overlay">
@@ -141,7 +194,7 @@
               Map Layers
             </button>
           </h2>
-          <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample"></div>
+          <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne"></div>
         </div>
         <div class="accordion-item">
           <h2 class="accordion-header" id="headingTwo">
@@ -149,7 +202,7 @@
               Choose Time Period
             </button>
           </h2>
-          <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample"></div>
+          <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"></div>
         </div>
       </div>
       <!-- <button class="accordion" id="layers_acc">
@@ -157,7 +210,27 @@
       </button> -->
       <!-- <button class="accordion" id="time_filter">Choose Time Period</button> -->
     </div>
-    
+    <div class="form-popup" id="present_form">
+      <button id='close' onclick='closeForm()'>x</button>
+      <form action="/action_page.php" class="form-container">
+        <h1>Present</h1>
+        <p>Click on the button at the bottom of this page to open the login form.</p>
+      </form>
+    </div>
+    <div class="form-popup" id="near_future_form">
+      <button id='close' onclick='closeForm()'>x</button>
+      <form action="/action_page.php" class="form-container">
+        <h1>Near Future</h1>
+        <p>Click on the button at the bottom of this page to open the login form.</p>
+      </form>
+    </div>
+    <div class="form-popup" id="far_future_form">
+      <button id='close' onclick='closeForm()'>x</button>
+      <form action="/action_page.php" class="form-container">
+        <h1>Far Future</h1>
+        <p>Click on the button at the bottom of this page to open the login form.</p>
+      </form>
+    </div>
     <script>
       // define access token
       mapboxgl.accessToken = 'pk.eyJ1IjoiYWRpa2xlaW4iLCJhIjoiY2toNG04aXBzMDl2cTJzbzlmNHc3Ym4xeSJ9.oMpVy4Lh1G8_t14X6ASKiw';
@@ -389,6 +462,23 @@
         // });
 
         // legend.appendChild(layers_acc);
+        
+        // var forms = ['present_form', 'near_future_form', 'far_future_form'];
+
+        // function openForm(idx) {
+        //   var lst = [0, 1, 2];
+        //   lst.splice(idx, 1);
+        //   document.getElementById(forms[lst[0]]).style.display = "none";
+        //   document.getElementById(forms[lst[1]]).style.display = "none";
+        //   document.getElementById(forms[idx]).style.display = "block";
+        // }
+
+        // function closeForm() {
+        //   for (i = 0; i < forms.length; i++)
+        //   {
+        //     document.getElementById(forms[i]).style.display = "none";
+        //   }
+        // }
 
         var periods = ['Current', 'Present', 'Near Future', 'Far Future'];
 
@@ -404,6 +494,7 @@
           tmp_radio.id = periods[i];
           tmp_radio.name = 'time';
           tmp_radio.value = periods[i]
+          // tmp_radio.onchange = "openForm()";
           var label = document.createElement('label');
           label.htmlFor = periods[i];
           label.innerHTML = periods[i];
@@ -425,21 +516,25 @@
             tamil_checkbox.className = '';
             tamil_checkbox.checked = false;
             map.setLayoutProperty('Tamil Settlements', 'visibility', 'none');
+            closeForm();
           } else if (time === periods[1]) {
             map.setLayoutProperty('Tamil Settlements', 'visibility', 'visible');
             filterTime = ["match", ["get", "time"], ["far future", "near future"], false, true];
             tamil_checkbox.className = 'active';
             tamil_checkbox.checked = true;
+            openForm(0);
           } else if (time === periods[2]) {
             map.setLayoutProperty('Tamil Settlements', 'visibility', 'visible');
             filterTime = ["match", ["get", "time"], ["far future", "present"], false, true];
             tamil_checkbox.className = 'active';
             tamil_checkbox.checked = true;
+            openForm(1);
           } else if (time === periods[3]) {
             map.setLayoutProperty('Tamil Settlements', 'visibility', 'visible');
             filterTime = ["match", ["get", "time"], ["present", "near future"], false, true];
             tamil_checkbox.className = 'active';
             tamil_checkbox.checked = true;
+            openForm(2);
           } else {
             console.log('error');
           }
@@ -448,6 +543,26 @@
           map.setFilter('Tamil Settlements', ['all', filterTime]);
         });
         // layers_acc.appendChild(time_filter);
+
+        // var radio = document.getElementsByName('time');
+        // console.log(radio);
+        // for (i = 0; i < radio.length; i++) {
+        //   radio[i].addEventListener("change", function(e) {
+        //     // var time = e.target.value;
+        //     console.log(radio[i]);
+        //     openForm();
+        //   });
+        // }
+        
+
+        // $('input[name="radioButton"]').on("click", function(e) {
+
+        //   if (e.clientX === 0 && e.clientY === 0) {
+        //       console.log("keyboard");
+        //   } else {
+        //       console.log("mouse");
+        //   };
+        // }
 
         function hoverPopupMove(popup) {
           map.on('mousemove', function (e) {
