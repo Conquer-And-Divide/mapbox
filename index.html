@@ -214,21 +214,31 @@
       <button id='close' onclick='closeForm()'>x</button>
       <form action="/action_page.php" class="form-container">
         <h1>Present</h1>
-        <p>Click on the button at the bottom of this page to open the login form.</p>
+        <p>Due to the dystopian occurrences (floods and massive air pollution) taking place in south India, 
+          while the Indians doesn't have any other alternative for settlement, Tamil diaspora begins to settle in Gush Ezion.
+        At first, they are settled inside existing residence of the locals (Israelies and Palestinians).</p>
       </form>
     </div>
     <div class="form-popup" id="near_future_form">
       <button id='close' onclick='closeForm()'>x</button>
       <form action="/action_page.php" class="form-container">
         <h1>Near Future</h1>
-        <p>Click on the button at the bottom of this page to open the login form.</p>
+        <p>After a while, the control games in the area are on the rise - 
+          The Israeli settlements are expanding while starting more "Pop-up settlements" (Tower and Stockade - "Homa u'migdal") 
+          and places guarding towers inside the Palestinian settlements which are expanding by spreading olive groves - 
+          The Indian communities gain power and resources, buy lands and builds temples.
+        </p>
       </form>
     </div>
     <div class="form-popup" id="far_future_form">
       <button id='close' onclick='closeForm()'>x</button>
       <form action="/action_page.php" class="form-container">
         <h1>Far Future</h1>
-        <p>Click on the button at the bottom of this page to open the login form.</p>
+        <p>Almost every part of the land is occupied by 3 groups of power.
+          The control games and expantion in the area continues, this time also inside the groups themselves.
+          The Indians claim lands by placing fences and building more and more temples, while the Israelies and the Palestinians continue the spatial expantion.
+          The whole area is filled with collisions and conflicts.
+        </p>
       </form>
     </div>
     <script>
@@ -239,9 +249,11 @@
       var map = new mapboxgl.Map({
         container: 'map', // container id
         style: 'mapbox://styles/adiklein/ckhdcb17801y819mstttohsg5' // map style URL from Mapbox Studio
+        // zoom: 6
         
       });
 
+      var pos = [35.242649, 31.635300];
 
       // wait for map to load before adjusting it
       map.on('load', function () {
@@ -250,6 +262,27 @@
 
         // make a pointer cursor
         map.getCanvas().style.cursor = 'default';
+
+        map.flyTo({
+          // These options control the ending camera position: centered at
+          // the target, at zoom level 9, and north up.
+          center: pos,
+          zoom: 11,
+          bearing: 0,
+          
+          // These options control the flight curve, making it move
+          // slowly and zoom out almost completely before starting
+          // to pan.
+          speed: 0.5, // make the flying slow
+          curve: 1, // change the speed at which it zooms out
+          
+          // This can be any easing function: it takes a number between
+          // 0 and 1 and returns another number between 0 and 1.
+          easing: (t) => t,
+          
+          // this animation is considered essential with respect to prefers-reduced-motion
+          essential: true
+        });
 
         // define layer names
         var layers = [
